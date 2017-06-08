@@ -12,8 +12,8 @@ namespace Capstone.Models
         public int CampgroundID { get; set; }
         public int SiteNumber { get; set; }
         public int MaxOccupancy { get; set; }
-        public bool IsAccessible { get; set; }
+        public int IsAccessible { get; set; }
         public int MaxRVLength { get; set; }
-        public bool HasUtilities { get; set; }
+        public int HasUtilities { get; set; }
     }
 }

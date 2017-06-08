@@ -147,7 +147,29 @@ namespace Capstone
         {
             ViewCampgrounds(userParkChoice);
             int userChoiceCampgroundID = CLIHelper.GetInteger("Enter the desired campground ID: ");
+            DateTime userChoiceStartDate = CLIHelper.GetDateTime("Enter the desired start date: (YYYY/MM/DD) ");
+            DateTime userChoiceEndDate = CLIHelper.GetDateTime("Enter the desired end date: (YYYY/MM/DD) ");
 
+            ReservationSQLDAL dal = new ReservationSQLDAL(DatabaseConnection);
+            List<Site> availableSites = dal.SearchForAvailableReservations(userChoiceCampgroundID, userChoiceStartDate, userChoiceEndDate);
+
+            CampgroundSQLDAL cgDal = new CampgroundSQLDAL(userChoiceCampgroundID, DatabaseConnection);
+            decimal totalCampingCost = cgDal.GetCampgroundDailyRate();
+            int totalDays = Convert.ToInt32((userChoiceEndDate - userChoiceStartDate).TotalDays);
+
+            if (availableSites.Count > 0)
+            {
+                Console.WriteLine("Showing First Five Available Sites:");
+                Console.WriteLine("Site No.     Max Occupancy    Accessible?    Max RV Length    Utilites?   Total Cost");
+                foreach (Site site in availableSites)
+                {
+                    Console.WriteLine("#" + site.SiteNumber + "  " + site.MaxOccupancy + "   " + site.IsAccessible + "   " + site.MaxRVLength + "   " + site.HasUtilities + "   " + (totalCampingCost * totalDays).ToString("C2"));
+                }
+            }
+            else
+            {
+                Console.WriteLine("**** NO RESULTS ****");
+            }
             
         }
 
