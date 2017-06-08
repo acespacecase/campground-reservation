@@ -127,7 +127,7 @@ namespace Capstone
                         ViewCampgrounds(userParkChoice);
                         break;
                     case Command_SearchReservations:
-                        // SearchReservations()
+                        SearchReservations(userParkChoice);
                         break;
                     case Command_BookReservation:
                         // BookReservation()
@@ -141,6 +141,14 @@ namespace Capstone
                         break;
                 }
             }
+        }
+
+        private void SearchReservations(Park userParkChoice)
+        {
+            ViewCampgrounds(userParkChoice);
+            int userChoiceCampgroundID = CLIHelper.GetInteger("Enter the desired campground ID: ");
+
+            
         }
 
         private void ViewCampgrounds(Park userParkChoice)
