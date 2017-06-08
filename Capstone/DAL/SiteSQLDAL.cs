@@ -8,7 +8,7 @@ using Capstone.Models;
 
 namespace Capstone.DAL
 {
-    public class SiteSQLDAL
+    public class SiteSQLDAL 
     {
         private string connectionString;
 

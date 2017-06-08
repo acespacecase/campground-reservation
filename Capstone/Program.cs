@@ -19,9 +19,8 @@ namespace Capstone
             CampgroundCLI program = new CampgroundCLI(connectionString);
             program.RunCLI();
 
-            /* Tests for all
+            /* Tests for all  (We have some)
              * Make a reservation function
-             * Dependency injection
              * Formatting the user interface
              * 
              * Search for park-wide reservations
