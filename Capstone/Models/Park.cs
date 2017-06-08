@@ -18,7 +18,7 @@ namespace Capstone.Models
 
         public override string ToString()
         {
-            return (this.ParkName + " National Park");
+            return (this.ParkName);
         }
     }
 }

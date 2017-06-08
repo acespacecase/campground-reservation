@@ -56,7 +56,7 @@ namespace Capstone
             {
                 for (int i = 0; i < parks.Count; i++)
                 {
-                    Console.WriteLine("(" + (i + 1) + ") " + parks[i].ToString());
+                    Console.WriteLine("--" + parks[i].ToString());
                 }
             }
             else
@@ -80,7 +80,7 @@ namespace Capstone
         public void SelectPark()
         {
             // Prompt user for park, and have the ParkSQLDAL return the relevant park(s) and their information.
-            string userPark = CLIHelper.GetString("Please select the Park ID: ");
+            string userPark = CLIHelper.GetString("Please select the Park Name: ");
             ParkSQLDAL dal = new ParkSQLDAL(DatabaseConnection);
             List<Park> foundParks = dal.FindPark(userPark);
 
@@ -91,8 +91,8 @@ namespace Capstone
                 {
                     Console.WriteLine("Park Name: " + p.ToString());
                     Console.WriteLine("Park Location: " + p.ParkLocation);
-                    Console.WriteLine("Park Area: " + p.ParkArea.ToString("N0"));
-                    Console.WriteLine("Establish Date: " + p.ParkEstablishDate + " sq km");
+                    Console.WriteLine("Park Area: " + p.ParkArea.ToString("N0") + " sq km");
+                    Console.WriteLine("Establish Date: " + p.ParkEstablishDate.ToString("y"));
                     Console.WriteLine("Annual Visitors: " + p.VisitorCount.ToString("N0") + "\n");
                     Console.WriteLine(p.ParkDescription);
                 }
@@ -105,7 +105,7 @@ namespace Capstone
             // Open submenu where user can search for and book reservations, or back out to main menu
             DisplayParkSubMenu(foundParks[0]);
         }
-        public void DisplayParkSubMenu(Park userParkChoice)
+        private void DisplayParkSubMenu(Park userParkChoice)
         {
             const string Command_ViewCampgrounds = "1";
             const string Command_SearchReservations = "2";
@@ -124,7 +124,7 @@ namespace Capstone
                 switch (userCommand.ToLower())
                 {
                     case Command_ViewCampgrounds:
-                        // ViewCampgrounds()
+                        ViewCampgrounds(userParkChoice);
                         break;
                     case Command_SearchReservations:
                         // SearchReservations()
@@ -140,6 +140,35 @@ namespace Capstone
                         Console.WriteLine("That's not a valid option.\n");
                         break;
                 }
+            }
+        }
+
+        private void ViewCampgrounds(Park userParkChoice)
+        {
+            CampgroundSQLDAL dal = new CampgroundSQLDAL(DatabaseConnection, userParkChoice.ParkID);
+            List<Campground> allCampgrounds = dal.GetCampgrounds();
+            Dictionary<int, string> allMonths = new Dictionary<int, string>
+            {
+                {1, "January" },
+                {2, "February" },
+                {3, "March" },
+                {4, "April" },
+                {5, "May" },
+                {6, "June" },
+                {7, "July" },
+                {8, "August" },
+                {9, "September" },
+                {10, "October" },
+                {11, "November" },
+                {12, "December" }
+            };
+
+            Console.WriteLine("Showing all campgrounds for " + userParkChoice.ToString() + "\n");
+            Console.WriteLine("Campground ID    Name    Open    Close   Daily Fee");
+
+            foreach(Campground camp in allCampgrounds)
+            {
+                Console.WriteLine("#" + camp.CampgroundID + camp.CampgroundName + allMonths[camp.OpenFromMonth] + allMonths[camp.OpenToMonth] + camp.DailyFee.ToString("C2") );
             }
         }
     }
