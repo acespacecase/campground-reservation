@@ -38,9 +38,9 @@ namespace Capstone.DAL
                     }
                 }
             }
-            catch (SqlException ex)
+            catch
             {
-                Console.WriteLine("There was an error connecting to the database: " + ex.Message);
+                Console.WriteLine("There was an error connecting to the database. Check your values!");
             }
 
             return output;
@@ -60,9 +60,9 @@ namespace Capstone.DAL
                     dailyRate = Convert.ToDecimal(cmd.ExecuteScalar());
                 }
             }
-            catch (SqlException ex)
+            catch
             {
-                Console.WriteLine("There was an error connecting to the database: " + ex.Message);
+                Console.WriteLine("There was an error connecting to the database. Check your values!");
             }
 
             return dailyRate;
@@ -92,6 +92,34 @@ namespace Capstone.DAL
                 campgroundMap.Add(c.CampgroundID, c);
             }
             return campgroundMap;
+        }
+
+        public int GetCampgroundIDFromName(string name)
+        {
+            int campgroundID = 0;
+
+            try
+            {
+                using(SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    SqlCommand cmd = new SqlCommand("SELECT campground_id FROM campground WHERE name = @name;", connection);
+                    cmd.Parameters.AddWithValue("@name", name);
+                    campgroundID = Convert.ToInt32(cmd.ExecuteScalar());
+                }
+            }
+            catch
+            {
+                Console.WriteLine("There was an error connecting to the database. Check your values!");
+            }
+
+            if (campgroundID == 0)
+            {
+                throw new Exception();
+            }
+
+            return campgroundID;
         }
     }
 }

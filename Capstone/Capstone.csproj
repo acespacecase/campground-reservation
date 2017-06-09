@@ -49,7 +49,6 @@
     <Compile Include="DAL\CampgroundSQLDAL.cs" />
     <Compile Include="DAL\ParkSQLDAL.cs" />
     <Compile Include="DAL\ReservationSQLDAL.cs" />
-    <Compile Include="DAL\SiteSQLDAL.cs" />
     <Compile Include="Models\Campground.cs" />
     <Compile Include="Models\Park.cs" />
     <Compile Include="Models\Reservation.cs" />

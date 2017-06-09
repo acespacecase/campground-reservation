@@ -19,8 +19,7 @@ namespace Capstone
             CampgroundCLI program = new CampgroundCLI(connectionString);
             program.RunCLI();
 
-            /* Search for park-wide reservations
-             * Off-search
+            /* Off-season search
              * Search by campsite requirements (utilities, RV-length, etc)
              * View all upcoming reservations (30 days)
              */

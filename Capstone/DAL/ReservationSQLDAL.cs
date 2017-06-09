@@ -47,9 +47,9 @@ namespace Capstone.DAL
                     }
                 }
             }
-            catch (SqlException ex)
+            catch
             {
-                Console.WriteLine("There was an error connecting to the database: " + ex.Message);
+                Console.WriteLine("There was an error connecting to the database. Check your values!");
             }
 
 
@@ -88,9 +88,9 @@ namespace Capstone.DAL
                     }
                 }
             }
-            catch (SqlException ex)
+            catch
             {
-                Console.WriteLine("There was an error connecting to the database " + ex.Message);
+                Console.WriteLine("There was an error connecting to the database. Check your values!");
             }
 
             return allOpenSites;
@@ -100,6 +100,11 @@ namespace Capstone.DAL
         {
             int userReservationID = 0;
             int userChoiceSiteID;
+
+            if (userChoiceStartDate > userChoiceEndDate)
+            {
+                throw new Exception("Invalid dates!");
+            }
 
             try
             {
@@ -120,9 +125,9 @@ namespace Capstone.DAL
                     userReservationID = Convert.ToInt32(cmd.ExecuteScalar());
                 }
             }
-            catch (SqlException ex)
+            catch
             {
-                Console.WriteLine("There was an error connecting to the database: " + ex.Message);
+                Console.WriteLine("There was an error connecting to the database. Check your values!");
             }
 
             if (userReservationID == 0)

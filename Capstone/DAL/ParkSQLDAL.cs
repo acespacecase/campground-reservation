@@ -34,9 +34,9 @@ namespace Capstone.DAL
                     }
                 }
             }
-            catch (SqlException ex)
+            catch
             {
-                Console.WriteLine("Error connecting to database: " + ex.Message);
+                Console.WriteLine("Error connecting to database. Check your values. ");
             }
 
             return output;
@@ -60,9 +60,9 @@ namespace Capstone.DAL
                     }
                 }
             }
-            catch (SqlException ex)
+            catch
             {
-                Console.WriteLine("Error connecting to database: " + ex.Message);
+                Console.WriteLine("Error connecting to database. Check your values!");
             }
 
             return output;
