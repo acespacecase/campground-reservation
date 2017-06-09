@@ -164,6 +164,12 @@ namespace Capstone
             ReservationSQLDAL dal = new ReservationSQLDAL(DatabaseConnection);
             Dictionary<Site, Campground> siteAndCampground = dal.SearchReservationByDate(userParkChoice.ParkID, userChoiceStartDate, userChoiceEndDate);
 
+            if (siteAndCampground.Count == 0)
+            {
+                Console.WriteLine("**** NO RESULTS ****");
+                return;
+            }
+
             Console.WriteLine("Campground Name".PadRight(25) + "Site Number".PadRight(15) + "Max Occ.".PadRight(15) + "Accessible?".PadRight(15) +
                 "Max RV Length".PadRight(15) + "Utilities?".PadRight(15) + "Total Cost");
 

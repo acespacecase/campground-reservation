@@ -19,6 +19,7 @@ namespace Capstone.DAL
 
         public List<Site> SearchReservationByCampground(int campgroundID, DateTime startDate, DateTime endDate)
         {
+            // Copy this block below to SearchReservationByDate()
             List<Site> availableSites = new List<Site>();
 
             string sqlQueryForAvailableSites = "SELECT TOP 5 site.site_id, site.campground_id, site.max_occupancy, " +
@@ -27,7 +28,6 @@ namespace Capstone.DAL
                 "WHERE (reservation.reservation_id IS NULL OR ((reservation.from_date BETWEEN @startDate AND @endDate) " +
                 "AND (reservation.to_date BETWEEN @startDate AND @endDate)) OR (reservation.from_date < @startDate AND reservation.to_date > @endDate)))" +
                 "GROUP BY site.site_id, site.campground_id, site.max_occupancy, site.max_rv_length, site.accessible, site.site_number, site.utilities;";
-
 
             try
             {
@@ -43,7 +43,10 @@ namespace Capstone.DAL
 
                     while (reader.Read())
                     {
-                        availableSites.Add(PopulateSite(reader));
+                        if (InSeason(startDate, endDate, campgroundID))
+                        {
+                            availableSites.Add(PopulateSite(reader));
+                        }
                     }
                 }
             }
@@ -63,9 +66,9 @@ namespace Capstone.DAL
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sqlQueryForAvailableSites = 
+                    string sqlQueryForAvailableSites =
                      "SELECT campground.name, site.site_id, site.campground_id, site.max_occupancy, " +
-                     "site.max_rv_length, site.accessible, site.site_number, site.utilities FROM site " + 
+                     "site.max_rv_length, site.accessible, site.site_number, site.utilities FROM site " +
                          "LEFT JOIN reservation ON reservation.site_id = site.site_id " +
                          "INNER JOIN campground ON site.campground_id = campground.campground_id " +
                          "INNER JOIN park ON campground.park_id = park.park_id " +
@@ -84,7 +87,11 @@ namespace Capstone.DAL
 
                     while (reader.Read())
                     {
-                        allOpenSites.Add(PopulateSite(reader), campgroundMap[Convert.ToInt32(reader["campground_id"])]);
+                        if (InSeason(startDate, endDate, Convert.ToInt32(reader["campground_id"])))
+                        {
+                            allOpenSites.Add(PopulateSite(reader), campgroundMap[Convert.ToInt32(reader["campground_id"])]);
+                        }
+
                     }
                 }
             }
@@ -95,7 +102,6 @@ namespace Capstone.DAL
 
             return allOpenSites;
         }
-
         public int BookReservation(int userChoiceCampgroundID, DateTime userChoiceStartDate, DateTime userChoiceEndDate, int userChoiceSiteNumber, string userReservationName)
         {
             int userReservationID = 0;
@@ -136,7 +142,6 @@ namespace Capstone.DAL
             }
             return userReservationID;
         }
-
         private Site PopulateSite(SqlDataReader reader)
         {
             return new Site
@@ -149,6 +154,73 @@ namespace Capstone.DAL
                 MaxRVLength = Convert.ToInt32(reader["max_rv_length"]),
                 HasUtilities = Convert.ToInt32(reader["utilities"])
             };
+        }
+
+        private bool InSeason(DateTime startDate, DateTime endDate, int campgroundID)
+        {
+            bool isInSeason = false;
+            int startMonth = startDate.Month;
+            int endMonth = endDate.Month;
+
+            if (endMonth < startMonth)
+            {
+                endMonth += 12;
+            }
+
+            int campgroundOpenFrom = GetCampgroundOpenMonth(campgroundID);
+            int campgroundOpenTo = GetCampgroundCloseMonth(campgroundID);
+
+            if (startMonth >= campgroundOpenFrom && endMonth <= campgroundOpenTo)
+            {
+                isInSeason = true;
+            }
+            else if (startMonth >= campgroundOpenFrom && endMonth >= campgroundOpenTo)
+            {
+                isInSeason = true;
+            }
+
+            return isInSeason;
+        }
+
+        private int GetCampgroundOpenMonth(int campgroundID)
+        {
+            int openMonth = 0;
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    SqlCommand cmd = new SqlCommand("SELECT open_from_mm from campground WHERE campground.campground_id = @campgroundID;", connection);
+                    cmd.Parameters.AddWithValue("@campgroundID", campgroundID);
+                    openMonth = Convert.ToInt32(cmd.ExecuteScalar());
+                }
+                return openMonth;
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("There was an error connecting to the database" + ex.Message);
+                throw;
+            }
+        }
+        private int GetCampgroundCloseMonth(int campgroundID)
+        {
+            int closeMonth = 0;
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    SqlCommand cmd = new SqlCommand("SELECT open_to_mm from campground WHERE campground.campground_id = @campgroundID;", connection);
+                    cmd.Parameters.AddWithValue("@campgroundID", campgroundID);
+                    closeMonth = Convert.ToInt32(cmd.ExecuteScalar());
+                }
+                return closeMonth;
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("There was an error connecting to the database" + ex.Message);
+                throw;
+            }
         }
 
     }
