@@ -111,6 +111,7 @@ namespace Capstone
             const string Command_ViewCampgrounds = "1";
             const string Command_SearchReservations = "2";
             const string Command_BookReservationByDate = "3";
+            const string Command_ViewReservationsNext30Days = "4";
             const string ReturnToMainMenu = "q";
 
             while (true)
@@ -119,6 +120,7 @@ namespace Capstone
                 Console.WriteLine("(1) View campgrounds for " + userParkChoice.ToString());
                 Console.WriteLine("(2) Search and Book Reservations by campground in " + userParkChoice.ToString());
                 Console.WriteLine("(3) Search and Book by Desired Arrival and Departure Date");
+                Console.WriteLine("(4) View all reservations in the next 30 days" );
                 Console.WriteLine("(Q) Quit ");
 
                 string userCommand = Console.ReadLine();
@@ -133,6 +135,9 @@ namespace Capstone
                     case Command_BookReservationByDate:
                         BookReservationByDate(userParkChoice);
                         break;
+                    case Command_ViewReservationsNext30Days:
+                        ViewReservationsForNext30Days(userParkChoice);
+                        break;
                     case ReturnToMainMenu:
                         Console.Clear();
                         Console.WriteLine("Returning to main menu...");
@@ -143,7 +148,35 @@ namespace Capstone
                 }
             }
         }
+        private void ViewReservationsForNext30Days(Park userParkChoice)
+        {
+            List<int> reservationSiteIDs = new List<int>();
+            List<string> reservationCampgroundNames = new List<string>();
+            List<Reservation> reservationsInNext30Days = new List<Reservation>();
 
+            ParkSQLDAL parkDAL = new ParkSQLDAL(DatabaseConnection);
+            parkDAL.GetNextMonthsReservations(userParkChoice, ref reservationSiteIDs, ref reservationCampgroundNames, ref reservationsInNext30Days);
+
+            if (reservationsInNext30Days.Count == 0)
+            {
+                Console.WriteLine("There are no reservations in the next 30 days.");
+            }
+            else
+            {
+                Console.WriteLine("All reservations in next 30 days:\n");
+                Console.WriteLine("Site ID ".PadRight(15) + "Campground Name".PadRight(35) + "Reservation ID".PadRight(15) + "Res Name".PadRight(35) + "From Date".PadRight(15) + "To Date".PadRight(15));
+                Console.WriteLine("------------------------------------------------------------------------------------------------------------");
+                for (int i = 0; i < reservationSiteIDs.Count; i++)
+                {
+                    Console.Write(reservationSiteIDs[i].ToString().PadRight(15));
+                    Console.Write(reservationCampgroundNames[i].PadRight(35));
+                    Console.Write(reservationsInNext30Days[i].ReservationID.ToString().PadRight(15));
+                    Console.Write(reservationsInNext30Days[i].ReservationName.PadRight(35));
+                    Console.Write(reservationsInNext30Days[i].FromDate.ToString().PadRight(15));
+                    Console.Write(reservationsInNext30Days[i].ToDate.ToString().PadRight(15) + "\n");
+                }
+            }
+        }
         private void BookReservationByDate(Park userParkChoice)
         {
             int userChoiceSiteNumber, userChoiceCampgroundID;
@@ -213,7 +246,6 @@ namespace Capstone
             }
 
         }
-
         private void SearchReservations(Park userParkChoice)
         {
             int userChoiceSiteNumber;
@@ -271,7 +303,6 @@ namespace Capstone
             
             
         }
-
         private void BookReservation(int userChoiceCampgroundID, DateTime userChoiceStartDate, DateTime userChoiceEndDate, int userChoiceSiteNumber, string userReservationName)
         {
             ReservationSQLDAL dal = new ReservationSQLDAL(DatabaseConnection);
@@ -286,7 +317,6 @@ namespace Capstone
                 Console.WriteLine("Invalid dates!");
             }
         }
-
         private void ViewCampgrounds(Park userParkChoice)
         {
             CampgroundSQLDAL dal = new CampgroundSQLDAL(DatabaseConnection, userParkChoice.ParkID);
