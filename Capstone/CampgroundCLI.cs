@@ -89,17 +89,17 @@ namespace Capstone
             {
                 foreach (Park p in foundParks)
                 {
-                    Console.WriteLine("Park Name: " + p.ToString());
-                    Console.WriteLine("Park Location: " + p.ParkLocation);
-                    Console.WriteLine("Park Area: " + p.ParkArea.ToString("N0") + " sq km");
-                    Console.WriteLine("Establish Date: " + p.ParkEstablishDate.ToString("y"));
-                    Console.WriteLine("Annual Visitors: " + p.VisitorCount.ToString("N0") + "\n");
-                    Console.WriteLine(p.ParkDescription);
+                    Console.WriteLine("Park Name: ".PadRight(20) + p.ToString());
+                    Console.WriteLine("Park Location: ".PadRight(20) + p.ParkLocation);
+                    Console.WriteLine("Park Area: ".PadRight(20) + p.ParkArea.ToString("N0") + " sq km");
+                    Console.WriteLine("Establish Date: ".PadRight(20) + p.ParkEstablishDate.ToString("y"));
+                    Console.WriteLine("Annual Visitors: ".PadRight(20) + p.VisitorCount.ToString("N0") + "\n");
+                    Console.WriteLine(p.ParkDescription + "\n");
                 }
             }
             else
             {
-                Console.WriteLine("No Results Found.");
+                Console.WriteLine("***** No Results Found *****");
             }
 
             // Open submenu where user can search for and book reservations, or back out to main menu
@@ -157,11 +157,16 @@ namespace Capstone
 
             if (availableSites.Count > 0)
             {
-                Console.WriteLine("Showing First Five Available Sites:");
-                Console.WriteLine("Site No.     Max Occupancy    Accessible?    Max RV Length    Utilites?   Total Cost");
+                Console.WriteLine("Showing First Five Available Sites: \n");
+                Console.WriteLine("Site No.".PadRight(16) + "Max Occupancy".PadRight(15) + "Accessible?".PadRight(15) + "Max RV Length".PadRight(15) + "Utilites?".PadRight(15) + "Total Cost");
                 foreach (Site site in availableSites)
                 {
-                    Console.WriteLine("#" + site.SiteNumber + "  " + site.MaxOccupancy + "   " + site.IsAccessible + "   " + site.MaxRVLength + "   " + site.HasUtilities + "   " + (totalCampingCost * totalDays).ToString("C2"));
+                    Console.Write("#" + site.SiteNumber.ToString().PadRight(15));
+                    Console.Write(site.MaxOccupancy.ToString().PadRight(15));
+                    Console.Write(site.IsAccessible == 0 ? "No".PadRight(15) : "Yes".PadRight(15));
+                    Console.Write(site.MaxRVLength == 0 ? "N/A".PadRight(15) : site.MaxRVLength.ToString().PadRight(15));
+                    Console.Write(site.HasUtilities == 0 ? "N/A".PadRight(15) : "Yes".PadRight(15));
+                    Console.Write((totalCampingCost * totalDays).ToString("C2") + "\n");
                 }
 
                 userChoiceSiteNumber = CLIHelper.GetInteger("Which site should be reserved (enter 0 to cancel)? ");
@@ -213,12 +218,21 @@ namespace Capstone
             };
 
             Console.WriteLine("Showing all campgrounds for " + userParkChoice.ToString() + "\n");
-            Console.WriteLine("Campground ID    Name    Open    Close   Daily Fee");
+            Console.Write("Campground ID".PadRight(15));
+            Console.Write("Name".PadRight(25));
+            Console.Write("Open".PadRight(15));
+            Console.Write("Close".PadRight(15));
+            Console.Write("Daily Fee\n");
 
             foreach(Campground camp in allCampgrounds)
             {
-                Console.WriteLine("#" + camp.CampgroundID + camp.CampgroundName + allMonths[camp.OpenFromMonth] + allMonths[camp.OpenToMonth] + camp.DailyFee.ToString("C2") );
+                Console.Write("#" + camp.CampgroundID.ToString().PadRight(14));
+                Console.Write(camp.CampgroundName.PadRight(25));
+                Console.Write(allMonths[camp.OpenFromMonth].PadRight(15));
+                Console.Write(allMonths[camp.OpenToMonth].PadRight(15));
+                Console.Write(camp.DailyFee.ToString("C2") + "\n");
             }
+            Console.WriteLine();
         }
     }
 }
