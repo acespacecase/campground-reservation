@@ -109,15 +109,13 @@ namespace Capstone
         {
             const string Command_ViewCampgrounds = "1";
             const string Command_SearchReservations = "2";
-            const string Command_BookReservation = "3";
             const string ReturnToMainMenu = "q";
 
             while (true)
             {
                 Console.WriteLine("What would you like to do? ");
                 Console.WriteLine("(1) View campgrounds for " + userParkChoice.ToString());
-                Console.WriteLine("(2) Search Reservations at " + userParkChoice.ToString());
-                Console.WriteLine("(3) Book Reservation");
+                Console.WriteLine("(2) Search and Book Reservations at " + userParkChoice.ToString());
                 Console.WriteLine("(Q) Quit ");
 
                 string userCommand = Console.ReadLine();
@@ -128,9 +126,6 @@ namespace Capstone
                         break;
                     case Command_SearchReservations:
                         SearchReservations(userParkChoice);
-                        break;
-                    case Command_BookReservation:
-                        // BookReservation()
                         break;
                     case ReturnToMainMenu:
                         Console.Clear();
@@ -145,6 +140,9 @@ namespace Capstone
 
         private void SearchReservations(Park userParkChoice)
         {
+            int userChoiceSiteNumber;
+            string userReservationName;
+
             ViewCampgrounds(userParkChoice);
             int userChoiceCampgroundID = CLIHelper.GetInteger("Enter the desired campground ID: ");
             DateTime userChoiceStartDate = CLIHelper.GetDateTime("Enter the desired start date: (YYYY/MM/DD) ");
@@ -153,8 +151,8 @@ namespace Capstone
             ReservationSQLDAL dal = new ReservationSQLDAL(DatabaseConnection);
             List<Site> availableSites = dal.SearchForAvailableReservations(userChoiceCampgroundID, userChoiceStartDate, userChoiceEndDate);
 
-            CampgroundSQLDAL cgDal = new CampgroundSQLDAL(userChoiceCampgroundID, DatabaseConnection);
-            decimal totalCampingCost = cgDal.GetCampgroundDailyRate();
+            CampgroundSQLDAL cgDal = new CampgroundSQLDAL(DatabaseConnection, userParkChoice.ParkID);
+            decimal totalCampingCost = cgDal.GetCampgroundDailyRate(userChoiceCampgroundID);
             int totalDays = Convert.ToInt32((userChoiceEndDate - userChoiceStartDate).TotalDays);
 
             if (availableSites.Count > 0)
@@ -165,12 +163,33 @@ namespace Capstone
                 {
                     Console.WriteLine("#" + site.SiteNumber + "  " + site.MaxOccupancy + "   " + site.IsAccessible + "   " + site.MaxRVLength + "   " + site.HasUtilities + "   " + (totalCampingCost * totalDays).ToString("C2"));
                 }
+
+                userChoiceSiteNumber = CLIHelper.GetInteger("Which site should be reserved (enter 0 to cancel)? ");
+
+                if (userChoiceSiteNumber == 0)
+                {
+                    return;
+                }
+
+                userReservationName = CLIHelper.GetString("What name should the reservation be made under? ");
+
+                BookReservation(userChoiceCampgroundID, userChoiceStartDate, userChoiceEndDate, userChoiceSiteNumber, userReservationName);
+                
             }
             else
             {
                 Console.WriteLine("**** NO RESULTS ****");
             }
             
+            
+        }
+
+        private void BookReservation(int userChoiceCampgroundID, DateTime userChoiceStartDate, DateTime userChoiceEndDate, int userChoiceSiteNumber, string userReservationName)
+        {
+            ReservationSQLDAL dal = new ReservationSQLDAL(DatabaseConnection);
+            int userReservationID = dal.BookReservation(userChoiceCampgroundID, userChoiceStartDate, userChoiceEndDate, userChoiceSiteNumber, userReservationName);
+
+            Console.WriteLine("Your reservation has been made! Your reservation number is: " + userReservationID.ToString());
         }
 
         private void ViewCampgrounds(Park userParkChoice)

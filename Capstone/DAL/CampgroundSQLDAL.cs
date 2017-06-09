@@ -12,20 +12,13 @@ namespace Capstone.DAL
     {
         private string connectionString;
         private int parkID;
-        private int campgroundID;
 
         public CampgroundSQLDAL(string dbConnectionString, int parkID)
         {
             connectionString = dbConnectionString;
             this.parkID = parkID;
         }
-
-        public CampgroundSQLDAL(int campgroundID, string dbConnectionString)
-        {
-            this.campgroundID = campgroundID;
-            connectionString = dbConnectionString;
-        }
-
+        
         public List<Campground> GetCampgrounds()
         {
             List<Campground> output = new List<Campground>();
@@ -53,7 +46,7 @@ namespace Capstone.DAL
             return output;
         }
 
-        public decimal GetCampgroundDailyRate()
+        public decimal GetCampgroundDailyRate(int userChoiceCampgroundID)
         {
             decimal dailyRate = 0.0M;
 
@@ -63,7 +56,7 @@ namespace Capstone.DAL
                 {
                     connection.Open();
                     SqlCommand cmd = new SqlCommand("SELECT campground.daily_fee FROM campground WHERE campground_id = @campgroundID;", connection);
-                    cmd.Parameters.AddWithValue("@campgroundID", campgroundID);
+                    cmd.Parameters.AddWithValue("@campgroundID", userChoiceCampgroundID);
                     dailyRate = Convert.ToDecimal(cmd.ExecuteScalar());
                 }
             }
