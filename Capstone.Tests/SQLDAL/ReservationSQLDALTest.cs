@@ -62,7 +62,7 @@ namespace Capstone.Tests.SQLDAL
         {
             ReservationSQLDAL dal = new ReservationSQLDAL(connectionString);
 
-            List<Site> validSites = dal.SearchForAvailableReservations(campgroundID, start, end);
+            List<Site> validSites = dal.SearchReservationByCampground(campgroundID, start, end);
 
             Assert.IsNotNull(validSites);
             Assert.IsTrue(validSites.Count > 0);

@@ -80,5 +80,18 @@ namespace Capstone.DAL
                 DailyFee = Convert.ToDecimal(reader["daily_fee"])
             };
         }
+        public Dictionary<int, Campground> PopulateCampgroundMap(int userParkID)
+        {
+            Dictionary<int, Campground> campgroundMap = new Dictionary<int, Campground>();
+
+            CampgroundSQLDAL dal = new CampgroundSQLDAL(connectionString, userParkID);
+            List<Campground> allCampgrounds = dal.GetCampgrounds();
+
+            foreach (Campground c in allCampgrounds)
+            {
+                campgroundMap.Add(c.CampgroundID, c);
+            }
+            return campgroundMap;
+        }
     }
 }
