@@ -20,6 +20,7 @@ namespace Capstone
         {
             DatabaseConnection = connection;
         }
+
         public void RunCLI()
         {
             PrintHeader();
@@ -47,6 +48,7 @@ namespace Capstone
                 }
             }
         }
+
         public void GetParks()
         {
             ParkSQLDAL dal = new ParkSQLDAL(DatabaseConnection);
@@ -64,12 +66,14 @@ namespace Capstone
                 Console.WriteLine("No results.");
             }
         }
+
         public void PrintHeader()
         {
             Console.WriteLine("**********************************");
             Console.WriteLine("Parks Database: By Kevin and Stacy");
             Console.WriteLine("**********************************\n");
         }
+
         public void PrintMenu()
         {
             Console.WriteLine("\nSelect your option: ");
@@ -77,6 +81,7 @@ namespace Capstone
             Console.WriteLine("(2) Select a Park");
             Console.WriteLine("(Q) Quit \n");
         }
+
         public void SelectPark()
         {
             // Prompt user for park, and have the ParkSQLDAL return the relevant park(s) and their information.
@@ -106,6 +111,7 @@ namespace Capstone
                 Console.WriteLine("***** No Results Found *****");
             }
         }
+
         private void DisplayParkSubMenu(Park userParkChoice)
         {
             const string Command_ViewCampgrounds = "1";
@@ -148,6 +154,7 @@ namespace Capstone
                 }
             }
         }
+
         private void ViewReservationsForNext30Days(Park userParkChoice)
         {
             List<int> reservationSiteIDs = new List<int>();
@@ -177,6 +184,7 @@ namespace Capstone
                 }
             }
         }
+
         private void BookReservationByDate(Park userParkChoice)
         {
             int userChoiceSiteNumber, userChoiceCampgroundID;
@@ -246,6 +254,7 @@ namespace Capstone
             }
 
         }
+
         private void SearchReservations(Park userParkChoice)
         {
             int userChoiceSiteNumber;
@@ -303,6 +312,7 @@ namespace Capstone
             
             
         }
+
         private void BookReservation(int userChoiceCampgroundID, DateTime userChoiceStartDate, DateTime userChoiceEndDate, int userChoiceSiteNumber, string userReservationName)
         {
             ReservationSQLDAL dal = new ReservationSQLDAL(DatabaseConnection);
@@ -317,6 +327,7 @@ namespace Capstone
                 Console.WriteLine("Invalid dates!");
             }
         }
+
         private void ViewCampgrounds(Park userParkChoice)
         {
             CampgroundSQLDAL dal = new CampgroundSQLDAL(DatabaseConnection, userParkChoice.ParkID);

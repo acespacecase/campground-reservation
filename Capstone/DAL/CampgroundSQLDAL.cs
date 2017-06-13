@@ -80,6 +80,7 @@ namespace Capstone.DAL
                 DailyFee = Convert.ToDecimal(reader["daily_fee"])
             };
         }
+
         public Dictionary<int, Campground> PopulateCampgroundMap(int userParkID)
         {
             Dictionary<int, Campground> campgroundMap = new Dictionary<int, Campground>();

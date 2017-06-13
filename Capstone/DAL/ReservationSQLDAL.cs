@@ -19,7 +19,6 @@ namespace Capstone.DAL
 
         public List<Site> SearchReservationByCampground(int campgroundID, DateTime startDate, DateTime endDate)
         {
-            // Copy this block below to SearchReservationByDate()
             List<Site> availableSites = new List<Site>();
 
             string sqlQueryForAvailableSites = "SELECT TOP 5 site.site_id, site.campground_id, site.max_occupancy, " +
@@ -58,6 +57,7 @@ namespace Capstone.DAL
 
             return availableSites;
         }
+
         public Dictionary<Site, Campground> SearchReservationByDate(int userParkChoice, DateTime startDate, DateTime endDate)
         {
             Dictionary<Site, Campground> allOpenSites = new Dictionary<Site, Campground>();
@@ -102,6 +102,7 @@ namespace Capstone.DAL
 
             return allOpenSites;
         }
+
         public int BookReservation(int userChoiceCampgroundID, DateTime userChoiceStartDate, DateTime userChoiceEndDate, int userChoiceSiteNumber, string userReservationName)
         {
             int userReservationID = 0;
@@ -142,6 +143,7 @@ namespace Capstone.DAL
             }
             return userReservationID;
         }
+
         private Site PopulateSite(SqlDataReader reader)
         {
             return new Site
@@ -202,6 +204,7 @@ namespace Capstone.DAL
                 throw;
             }
         }
+
         private int GetCampgroundCloseMonth(int campgroundID)
         {
             int closeMonth = 0;

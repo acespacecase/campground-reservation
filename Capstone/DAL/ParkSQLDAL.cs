@@ -16,6 +16,7 @@ namespace Capstone.DAL
         {
             connectionString = dbConnectionString;
         }
+
         public List<Park> GetParks()
         {
             List<Park> output = new List<Park>();
@@ -41,6 +42,7 @@ namespace Capstone.DAL
 
             return output;
         }
+
         public List<Park> FindPark(string userPark)
         {
             List<Park> output = new List<Park>();
@@ -67,7 +69,8 @@ namespace Capstone.DAL
 
             return output;
         }
-        public Park PopulatePark(SqlDataReader reader)
+
+        private Park PopulatePark(SqlDataReader reader)
         {
             return new Park
             {
@@ -80,6 +83,7 @@ namespace Capstone.DAL
                 VisitorCount = Convert.ToInt32(reader["visitors"])
             };
         }
+
         public void GetNextMonthsReservations(Park userParkChoice, ref List<int> siteNumbers, ref List<string> campgroundNames, ref List<Reservation> nextMonthsReservations)
         {
             DateTime today = DateTime.Now;
@@ -120,6 +124,7 @@ namespace Capstone.DAL
 
             
         }
+
         private Reservation PopulateReservation(SqlDataReader reader)
         {
             return new Reservation
